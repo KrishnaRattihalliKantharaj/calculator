@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+        <title>calculator</title>
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular.min.js"></script>
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script>
+            var calculatorApplication = angular.module('calculatorApp',[]);
+            var focus = "";
+            var focusValue = function(focussedValue){
+                focus = focussedValue;
+            }
+            calculatorApplication.controller('calculatorController',function($scope,$http){
+                $scope.operand1 = "";
+                $scope.operand2 = "";
+                $scope.Result = "";
+                $scope.operation=function(operator){
+                    $scope.opp = operator; 
+                }
+                $scope.numInput=function(value){
+                    if(focus == 'display1'){
+                        console.log("focus now is = " + focus);
+                        $scope.operand1+=value;
+                        console.log(operand1);
+                    }
+                    else if(focus == 'display2'){
+                        console.log("focus now is = " + focus);
+                        $scope.operand2+=value;
+                        console.log(operand2);
+                    }
+                    
+                }
+                $scope.Clear=function(){
+                    $scope.operand1="";
+                    $scope.operand2="";
+                    $scope.Result= "";
+                }
+                $scope.calculate=function(){
+                	$http({
+                		url:"/calculator",
+                		method:"POST",
+                		data:{
+                		"operand1":$scope.operand1,
+                		"operand2":$scope.operand2,
+                		"operation":$scope.opp
+                		}
+                		}).success(function(data){
+                		console.log(data.result);
+                		$scope.Result = data.result;
+                		});
+                
+                }
+            })
+        </script>
+        </head>
+        <body>
+        <div ng-app="calculatorApp" ng-controller="calculatorController">
+        <div class="col-sm-4"></div>
+        <div style="text-align:center" class="col-sm-4">
+        <form class="calcForm" name="calculator">
+            <div class="panel panel-default">
+            <div class="panel-heading" style="background-color:#0084b4">
+                    <br><br><br><br>
+            </div>
+            <br>
+            <input type="text" class="calcDisplay" onfocus = "focusValue('display1')" placeholder="Operand 1" id="operand1" style="width:210px;height:30px;" ng-model="operand1"/>
+            
+            <p></p>
+            <input type="text" class="calcDisplay" onfocus = "focusValue('display2')" placeholder="Operand 2" id="operand2" style="width:210px;height:30px;" ng-model="operand2"/>
+            <p></p>
+            <input type="text" class="calcDisplay" placeholder="Result" id="Result" style="width:210px;height:30px;" ng-model="Result"/>
+           <div class="calcRow">
+             <br> 
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="7" ng-click="numInput('7')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="8" ng-click="numInput('8')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="9" ng-click="numInput('9')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="+" ng-click="operation('+')" />
+            </div><br>
+            <div class="calcRow">
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="4" ng-click="numInput('4')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="5" ng-click="numInput('5')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="6" ng-click="numInput('6')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="-" ng-click="operation('-')" />
+            </div><br>
+            <div class="calcRow">
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="1" ng-click="numInput('1')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="2" ng-click="numInput('2')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="3" ng-click="numInput('3')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="x" ng-click="operation('*')" />
+            </div><br>
+            <div class="calcRow">
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="0" ng-click="numInput('0')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="." ng-click="numInput('.')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="/" ng-click="operation('/')" />
+                <input type="button" class="btn btn-primary" style="width:50px;height:50px;" value="=" ng-click="calculate()" />
+            </div><br>
+            <div class="calcRow">
+               <input type="button" class="btn btn-primary" style="width:210px;height:50px;" value="clear" ng-click="Clear()"/>
+            </div>
+            </div>
+        </form>
+        </div>
+    </body>
+</html>
